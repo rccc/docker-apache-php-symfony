@@ -37,17 +37,16 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       sudo \
       libzip-dev \
       wget \
-      librabbitmq-dev \
-    && pecl install amqp \
-    && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
+      python3-pip \
+    && apt-get install -y libpq-dev \
+    && docker-php-ext-install pgsql pdo_pgsql pdo \
     && docker-php-ext-configure intl \
     && docker-php-ext-install \
-      pdo_mysql \
+      pdo_pgsql \
       sockets \
       intl \
       opcache \
       zip \
-    && docker-php-ext-enable amqp \
     && rm -rf /tmp/* \
     && rm -rf /var/list/apt/* \
     && rm -rf /var/lib/apt/lists/* \
@@ -114,5 +113,7 @@ RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; 
 # create cached config file .env.local.php in case staging/prod environment
 RUN if [ "$BUILD_ARGUMENT_ENV" = "staging" ] || [ "$BUILD_ARGUMENT_ENV" = "prod" ]; then composer dump-env $BUILD_ARGUMENT_ENV; \
     fi
+
+RUN pip3 install epam.indigo --break-system-packages
 
 USER root
