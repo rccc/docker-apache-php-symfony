@@ -13,14 +13,13 @@ Docker environment required to run Symfony (based on official php and mysql dock
 * Docker version 18.06 or later
 * Docker compose version 1.22 or later
 * An editor or IDE
-* MySQL Workbench
 
 Note: OS recommendation - Linux Ubuntu based.
 
 ## Components
 1. Apache 2.4
 2. PHP 8.2 (Apache handler)
-3. MySQL 8
+3. PostgreSql 14.10
 4. Symfony 6
 5. RabbitMQ 3
 6. Mailpit (only for debug emails on dev environment)

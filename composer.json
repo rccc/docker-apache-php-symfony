@@ -8,7 +8,7 @@
 		"Php",
 		"Symfony",
 		"Supervisord",
-		"MySQL",
+		"PostgreSql",
 		"RabbitMQ"
 	],
 	"homepage": "https://github.com/systemsdk/docker-apache-php-symfony",
