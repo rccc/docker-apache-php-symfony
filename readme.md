@@ -1,5 +1,5 @@
 # PHP symfony environment
-Docker environment required to run Symfony (based on official php and mysql docker hub repositories).
+Docker environment required to run Symfony (based on official php and postgresql docker hub repositories).
 
 [![Actions Status](https://github.com/systemsdk/docker-apache-php-symfony/workflows/Symfony%20App/badge.svg)](https://github.com/systemsdk/docker-apache-php-symfony/actions)
 [![CircleCI](https://circleci.com/gh/systemsdk/docker-apache-php-symfony.svg?style=svg)](https://circleci.com/gh/systemsdk/docker-apache-php-symfony)
@@ -49,7 +49,7 @@ Note 2: Do not use .env.local.php on dev and test environment (delete it if exis
 
 Note 3: If you want to change default web port/xdebug configuration you can create .env.local file and set some params (see .env file).
 
-Note 4: Delete var/mysql-data folder if it exists.
+Note 4: Delete var/postgres-data folder if it exists.
 
 3.Add domain to local 'hosts' file:
 ```bash
@@ -90,7 +90,7 @@ make messenger-setup-transports
 ## Setting up STAGING environment locally
 1.You can clone this repository from GitHub or install via composer.
 
-Note: Delete var/mysql-data folder if it is exist.
+Note: Delete var/postgres-data folder if it is exist.
 
 If you have installed composer and want to install environment via composer you can use next cmd command:
 ```bash
@@ -117,9 +117,9 @@ If you have installed composer and want to install environment via composer you 
 composer create-project systemsdk/docker-apache-php-symfony example-app
 ```
 
-2.Edit docker-compose-prod.yml and set necessary user/password for MySQL and RabbitMQ.
+2.Edit docker-compose-prod.yml and set necessary user/password for PostgreSql and RabbitMQ.
 
-Note: Delete var/mysql-data folder if it is exist.
+Note: Delete var/postgres-data folder if it is exist.
 
 3.Edit env.prod and set necessary user/password for MySQL and RabbitMQ.
 
@@ -203,7 +203,7 @@ make env-prod
 make ssh
 make ssh-root
 make ssh-supervisord
-make ssh-mysql
+make ssh-pgsql
 make ssh-rabbitmq
 
 make composer-install-no-dev
@@ -215,7 +215,7 @@ make help
 
 make logs
 make logs-supervisord
-make logs-mysql
+make logs-pgsql
 make logs-rabbitmq
 
 make drop-migrate
