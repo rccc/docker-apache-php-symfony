@@ -17,51 +17,68 @@ services:
         - "${WEB_PORT_HTTP}:80"
         - "${WEB_PORT_SSL}:443"
       depends_on:
-        - mysql
-        - rabbitmq
+        - pgsql
+        # - rabbitmq
       networks:
         - symfony
 
     ### Cron tasks, RabbitMQ consumers
-    supervisord:
-      <<: *symfony-template
-      container_name: ${COMPOSE_PROJECT_NAME}-supervisord
-      expose: []
-      ports: []
-      command: ["/usr/bin/supervisord"]
+    # supervisord:
+    #   <<: *symfony-template
+    #   container_name: ${COMPOSE_PROJECT_NAME}-supervisord
+    #   expose: []
+    #   ports: []
+    #   command: ["/usr/bin/supervisord"]
 
-    mysql:
-      image: mysql:${MYSQL_VERSION}
-      platform: linux/x86_64
-      container_name: ${COMPOSE_PROJECT_NAME}-mysql
-      restart: always
-      command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
+    # mysql:
+    #   image: mysql:${MYSQL_VERSION}
+    #   platform: linux/x86_64
+    #   container_name: ${COMPOSE_PROJECT_NAME}-mysql
+    #   restart: always
+    #   command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
+    #   environment:
+    #     MYSQL_ROOT_PASSWORD: secret
+    #     MYSQL_DATABASE: symfony
+    #   volumes:
+    #     - ./var/mysql-data:/var/lib/mysql:delegated
+    #   networks:
+    #     - symfony
+    
+    ###> doctrine/doctrine-bundle ###
+    pgsql:
+      image: postgres:${POSTGRES_VERSION:-14.10-bullseye}
       environment:
-        MYSQL_ROOT_PASSWORD: secret
-        MYSQL_DATABASE: symfony
-      volumes:
-        - ./var/mysql-data:/var/lib/mysql:delegated
-      networks:
-        - symfony
-
-    rabbitmq:
-      image: ${COMPOSE_PROJECT_NAME}-rabbitmq
-      build:
-        context: ./docker/rabbitmq/
-        dockerfile: ./Dockerfile
-      container_name: ${COMPOSE_PROJECT_NAME}-rabbitmq
-      restart: always
-      environment:
-        RABBITMQ_ERLANG_COOKIE: 7ead507151fc4461b9f45c1161384a04
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
-        RABBITMQ_DEFAULT_VHOST: /
+          POSTGRES_DB: ${POSTGRES_DB:-app}
+          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dbuser01}
+          POSTGRES_USER: ${POSTGRES_USER:-dbuser}
       ports:
-        - "15672:15672"
+        - "54321:5432"
       volumes:
-        - ./var/rabbitmq:/var/lib/rabbitmq:delegated
+          - ./var/postgresql-data:/var/lib/postgresql:delegated
+          - ./docker/dev/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
       networks:
         - symfony
+    ###< doctrine/doctrine-bundle ###
+
+
+    # rabbitmq:
+    #   image: ${COMPOSE_PROJECT_NAME}-rabbitmq
+    #   build:
+    #     context: ./docker/rabbitmq/
+    #     dockerfile: ./Dockerfile
+    #   container_name: ${COMPOSE_PROJECT_NAME}-rabbitmq
+    #   restart: always
+    #   environment:
+    #     RABBITMQ_ERLANG_COOKIE: 7ead507151fc4461b9f45c1161384a04
+    #     RABBITMQ_DEFAULT_USER: guest
+    #     RABBITMQ_DEFAULT_PASS: guest
+    #     RABBITMQ_DEFAULT_VHOST: /
+    #   ports:
+    #     - "15672:15672"
+    #   volumes:
+    #     - ./var/rabbitmq:/var/lib/rabbitmq:delegated
+    #   networks:
+    #     - symfony
 
 networks:
   symfony:
